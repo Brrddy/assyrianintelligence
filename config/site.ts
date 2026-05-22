@@ -44,45 +44,17 @@ export const CONTACT = {
 export const WORK = [
   {
     id: 1,
-    title: "Untitled — Artist A",
+    title: "Jwanqa Ashuraya",
     caption: "Cinematic AI music video. Custom-trained likeness.",
-    embedUrl: "PLACEHOLDER_YT_1", // e.g. "https://www.youtube.com/embed/dQw4w9WgXcQ"
-    provider: "youtube" as "youtube" | "facebook",
+    embedUrl: "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F2540551946399715%2F&show_text=false&width=560&t=0",
+    provider: "facebook" as "youtube" | "facebook",
   },
   {
     id: 2,
-    title: "Untitled — Artist B",
+    title: "Azizta Nana",
     caption: "Surreal performance piece, end-to-end generative.",
-    embedUrl: "PLACEHOLDER_YT_2",
-    provider: "youtube" as const,
-  },
-  {
-    id: 3,
-    title: "Untitled — Artist C",
-    caption: "Hybrid live-action plates + generative VFX.",
-    embedUrl: "PLACEHOLDER_FB_3",
+    embedUrl: "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F966136599544721%2F&show_text=false&width=560&t=0",
     provider: "facebook" as const,
-  },
-  {
-    id: 4,
-    title: "Untitled — Artist D",
-    caption: "Anime treatment with consistent character locks.",
-    embedUrl: "PLACEHOLDER_YT_4",
-    provider: "youtube" as const,
-  },
-  {
-    id: 5,
-    title: "Untitled — Artist E",
-    caption: "Editorial fashion-tone single.",
-    embedUrl: "PLACEHOLDER_YT_5",
-    provider: "youtube" as const,
-  },
-  {
-    id: 6,
-    title: "Untitled — Artist F",
-    caption: "Retro 16mm grain, AI-driven narrative.",
-    embedUrl: "PLACEHOLDER_YT_6",
-    provider: "youtube" as const,
   },
 ];
 
