@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(disown)",
+      "Read(//private/tmp/**)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(npm run dev > /tmp/ai-dev.log 2>&1 & *)",
+      "Bash(node -e ' *)",
+      "Bash(ipconfig getifaddr *)",
+      "Bash(awk '{print \" http://\"$1\":3000 \\(Wi-Fi\\)\"}')",
+      "Bash(awk '{print \"  http://\"$1\":3000  \\(Ethernet/secondary\\)\"}')",
+      "Bash(curl -s http://localhost:3000 -o /tmp/page.html)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -s -o /tmp/page.html -w \"HTTP %{http_code}\\\\nsize: %{size_download} bytes\\\\n\" \"http://localhost:3000?bust=$\\(date +%s\\)\")",
+      "Bash(dig MX assyrianintelligence.com +short)",
+      "Bash(dig NS assyrianintelligence.com +short)",
+      "Bash(dig TXT assyrianintelligence.com +short)",
+      "Bash(curl -s -o /dev/null -w \"Dev server: HTTP %{http_code}\\\\n\" http://localhost:3000)"
+    ]
+  }
+}

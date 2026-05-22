@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Base
+   ============================================================ */
+html {
+  scroll-behavior: smooth;
+  /* Anchor links must clear the fixed top nav (~72-80px depending on state). */
+  scroll-padding-top: 88px;
+  /* Prevent iOS Safari from rescaling text on landscape rotation. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background: #ffffff;
+  color: #0a0a0a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Clip (not hidden) prevents sideways overflow on mobile WITHOUT turning
+     <body> into a scroll container — which on macOS Safari breaks wheel /
+     trackpad scrolling. Falls back to hidden in older browsers. */
+  overflow-x: clip;
+}
+
+/* Mobile-friendly tap behavior:
+   - remove the default blue tap flash on iOS / Android Chrome
+   - skip the legacy 300ms click delay on touch */
+a,
+button,
+[role="button"],
+[role="switch"],
+[role="radio"],
+label,
+summary,
+input[type="submit"],
+input[type="button"],
+input[type="range"],
+select,
+.toggle {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* iOS won't zoom-on-focus if the input is ≥16px. Belt-and-braces in case
+   a future component drops to text-sm somewhere. */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+::selection {
+  background: #c8a24b;
+  color: #ffffff;
+}
+
+/* Focus ring — gold, accessible, never gone */
+*:focus-visible {
+  outline: 2px solid #c8a24b;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Safe-area helpers — pads under the notch / above the home indicator on iOS. */
+.safe-top    { padding-top:    max(env(safe-area-inset-top), 0px); }
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 0px); }
+.safe-x {
+  padding-left:  max(env(safe-area-inset-left), 0px);
+  padding-right: max(env(safe-area-inset-right), 0px);
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+/* Custom component classes MUST live inside @layer components so that
+   Tailwind utilities (e.g. .hidden, .md:inline-flex) can override them.
+   Without this, properties added via @apply (like the inline-flex baked
+   into .btn-gold) win the cascade and break responsive `hidden` toggles. */
+@layer components {
+  .eyebrow {
+    @apply font-sans uppercase tracking-eyebrow text-[11px] text-gold;
+  }
+
+  .hairline {
+    @apply h-px w-full bg-hair;
+  }
+
+  /* Gold gradient hairline — used as a high-impact divider */
+  .hairline-gold {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(200, 162, 75, 0) 5%,
+      rgba(200, 162, 75, 0.5) 50%,
+      rgba(200, 162, 75, 0) 95%,
+      transparent 100%
+    );
+  }
+
+  /* Gold gradient text — for accent words */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #9a7a2e 0%, #c8a24b 35%, #e7d9b2 60%, #c8a24b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-sans text-sm font-medium text-white transition-all duration-300 ease-editorial;
+    background-image: linear-gradient(135deg, #c8a24b 0%, #d9b669 50%, #9a7a2e 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset,
+                0 8px 24px -8px rgba(200, 162, 75, 0.5);
+  }
+  .btn-gold:hover {
+    background-image: linear-gradient(135deg, #d9b669 0%, #e7d9b2 50%, #c8a24b 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset,
+                0 14px 30px -10px rgba(200, 162, 75, 0.6);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink/15 px-6 py-3 font-sans text-sm font-medium text-ink transition-all duration-300 ease-editorial hover:border-ink hover:bg-ink hover:text-white;
+  }
+
+  /* Card with gold gradient border (used on hover for premium cards) */
+  .gradient-border {
+    position: relative;
+  }
+  .gradient-border::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(200, 162, 75, 0) 0%, rgba(200, 162, 75, 0.6) 50%, rgba(200, 162, 75, 0) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .gradient-border:hover::after { opacity: 1; }
+
+  /* Section ambient gold glow — drop into a section's bg layer */
+  .aura-gold {
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgba(200, 162, 75, 0.10) 0%, transparent 60%),
+      radial-gradient(40% 35% at 90% 100%, rgba(200, 162, 75, 0.08) 0%, transparent 60%);
+  }
+}
+
+/* Custom range slider — 2px hairline track. The 22px thumb (defined below)
+   is the touch target; that's plenty on mobile. */
+input[type="range"].slider-gold {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: #e8e5dc;
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"].slider-gold::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #c8a24b;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 1px #c8a24b, 0 6px 14px rgba(200, 162, 75, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+input[type="range"].slider-gold::-webkit-slider-thumb:hover {
+  transform: scale(1.08);
+}
+
+input[type="range"].slider-gold::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #c8a24b;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 1px #c8a24b;
+  cursor: pointer;
+}
+
+/* Toggle (switch) */
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #e8e5dc;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  flex-shrink: 0;
+}
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.toggle[data-on="true"] {
+  background: #c8a24b;
+}
+.toggle[data-on="true"]::after {
+  transform: translateX(20px);
+}
+
+/* Tiny grain for premium texture (very subtle) */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Hero studio panel — pure CSS animations.
+   Kept in globals so they work even if framer-motion fails to hydrate. */
+@keyframes panel-pulse {
+  0%, 100% { transform: scale(1);    opacity: 0.9; }
+  50%      { transform: scale(1.05); opacity: 0.5; }
+}
+@keyframes studio-progress {
+  0%   { width: 0%;   opacity: 1; }
+  80%  { width: 100%; opacity: 1; }
+  100% { width: 100%; opacity: 0; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
