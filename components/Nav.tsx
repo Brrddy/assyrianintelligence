@@ -47,8 +47,14 @@ export function Nav() {
         <a
           href="#top"
           aria-label="Assyrian Intelligence — home"
-          className="shrink-0"
+          className="flex shrink-0 items-center gap-3"
         >
+          <img
+            src="/assyrian-flag.svg"
+            alt=""
+            aria-hidden="true"
+            className="h-6 w-auto rounded-[2px] ring-1 ring-hair/60"
+          />
           <Wordmark size="sm" />
         </a>
 
