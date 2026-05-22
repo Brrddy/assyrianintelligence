@@ -48,7 +48,7 @@ export function Hero() {
               <br />
               <span className="italic">made for the </span>
               <span className="relative inline-block italic">
-                <span className="text-gradient-gold">AI era.</span>
+                <span className="text-gradient-gold">age of AI.</span>
                 <span
                   aria-hidden
                   className="absolute -bottom-1 left-0 h-[3px] w-full rounded-full"
