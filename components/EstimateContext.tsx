@@ -72,9 +72,17 @@ export function EstimateProvider({ children }: { children: ReactNode }) {
 
   const compute = useCallback((): EstimateComputed => {
     const lines: LineItem[] = [];
-    lines.push({ label: "Base production fee", amount: PRICING.baseFee });
 
-    const songCost = state.seconds * PRICING.perSecond;
+    // Per-minute pricing prorated in 30-second increments.
+    //   firstMinuteFee       covers the first 60s   ($firstMinuteFee/2 per 30s)
+    //   eachAdditionalMinute covers each addl  60s  ($eachAdditionalMinute/2 per 30s)
+    // Example: 3:30 → $350 + 2.5 × $200 = $850.
+    const per30First = PRICING.firstMinuteFee / 2;
+    const per30Addl  = PRICING.eachAdditionalMinute / 2;
+    const halfMinutes = Math.max(1, Math.round(state.seconds / 30));
+    const firstHalves = Math.min(halfMinutes, 2);     // first two 30s blocks
+    const addlHalves  = Math.max(0, halfMinutes - 2); // 30s blocks beyond the first minute
+    const songCost = firstHalves * per30First + addlHalves * per30Addl;
     lines.push({
       label: `Song length (${formatSeconds(state.seconds)})`,
       amount: songCost,

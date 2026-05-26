@@ -107,8 +107,12 @@ export const PROCESS = [
  *  6.  PRICING — every dollar lives here. Retune freely.
  *  ----------------------------------------------------------------------------
  *  Compute order (must stay in sync with components/Estimator.tsx):
- *    subtotal = baseFee
- *             + seconds × perSecond
+ *    Song length is prorated in 30-second increments:
+ *      • first 60s     → firstMinuteFee, charged $firstMinuteFee/2 per 30s
+ *      • each addl 60s → eachAdditionalMinute, charged $eachAdditionalMinute/2 per 30s
+ *    songCost = firstMinuteFee + (minutes - 1) × eachAdditionalMinute  (whole minutes)
+ *             e.g. 3:30 → $350 + 2.5 × $200 = $850
+ *    subtotal = songCost
  *             + additionalCharacters × eachAdditionalCharacter
  *             + additionalScenes     × eachAdditionalScene
  *    if lipSync          → subtotal += subtotal × lipSyncPct
@@ -117,12 +121,14 @@ export const PROCESS = [
  *
  *  Calibration anchor (per client direction):
  *    4:00 song, 2 characters, 2 scenes, Standard, no add-ons
- *      → subtotal = 60 + 240×6 + 1×75 + 1×50 = $1,625 (midpoint)
- *      → displayed range with rangePct = 0.077 → $1,500 – $1,750
+ *      → song      = 350 + 3×200 = $950
+ *      → +char     = 1 × 75      = $75
+ *      → +scene    = 1 × 50      = $50
+ *      → subtotal  = $1,075 (midpoint)
  * ============================================================================ */
 export const PRICING = {
-  baseFee: 60,                        // flat onboarding / engineering fee
-  perSecond: 6,                       // 240s × $6 = $1,440
+  firstMinuteFee: 350,                // first minute of song
+  eachAdditionalMinute: 200,          // every minute after the first
   firstCharacter: 0,                  // included
   eachAdditionalCharacter: 75,
   firstScene: 0,                      // included
@@ -135,7 +141,6 @@ export const PRICING = {
     express:  { label: "Express",  surcharge: 350, window: "~2–3 days" },
   },
   // ± window around the computed total when shown to the user.
-  // 0.077 ≈ ±$125 around the $1,625 calibration midpoint → "$1,500 – $1,750".
   rangePct: 0.077,
   // Style is purely creative direction — does not affect price.
   stylePresets: [
@@ -148,12 +153,12 @@ export const PRICING = {
     "Performance",
     "Abstract",
   ],
-  // Song length slider
+  // Song length slider — 30-second granularity; pricing prorates per 30s.
   song: {
     minSeconds: 30,                   // 0:30
     maxSeconds: 480,                  // 8:00
     defaultSeconds: 240,              // 4:00
-    stepSeconds: 5,
+    stepSeconds: 30,                  // 30 seconds
   },
 };
 
