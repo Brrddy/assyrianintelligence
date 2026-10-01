@@ -4,6 +4,12 @@ import { useState } from "react";
 
 type Status = "idle" | "sending" | "subscribed" | "error";
 
+/**
+ * Newsletter signup — slim light-themed band.
+ * Designed to sit mid-page between the hero and the section tiles on /,
+ * framed by two gold hairlines so it reads as an editorial divider rather
+ * than a separate section.
+ */
 export function EmailCapture() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -39,38 +45,34 @@ export function EmailCapture() {
   return (
     <section
       id="subscribe"
-      className="relative isolate overflow-hidden bg-ink py-20 text-white md:py-28"
+      className="relative isolate overflow-hidden bg-white py-14 md:py-20"
     >
-      {/* ambient gold wash */}
+      {/* super soft gold wash — reads as continuous with the hero */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(60% 50% at 50% 0%, rgba(200,162,75,0.18) 0%, transparent 65%), radial-gradient(40% 40% at 90% 100%, rgba(200,162,75,0.10) 0%, transparent 60%)",
+            "radial-gradient(45% 80% at 50% 50%, rgba(200,162,75,0.07) 0%, transparent 70%)",
         }}
       />
-      {/* top gold hairline */}
+      {/* top + bottom gold hairlines frame the band */}
       <span
         aria-hidden
-        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent"
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent"
+      />
+      <span
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent"
       />
 
       <div className="relative mx-auto max-w-3xl px-6 text-center md:px-8">
-        <p className="font-sans text-[11px] uppercase tracking-eyebrow text-gold">
-          <span className="mr-3 inline-block h-px w-8 translate-y-[-3px] bg-gradient-to-r from-transparent via-gold to-gold align-middle" />
-          Dispatches
-          <span className="ml-3 inline-block h-px w-8 translate-y-[-3px] bg-gradient-to-r from-gold via-gold to-transparent align-middle" />
-        </p>
-
-        <h2 className="mt-5 font-display text-[34px] leading-[1.05] tracking-[-0.015em] md:text-[52px]">
-          Occasional dispatches on new work{" "}
-          <span className="italic text-gradient-gold">and the tools shaping it.</span>
+        <h2 className="font-display text-[26px] leading-tight tracking-[-0.015em] text-ink md:text-[36px]">
+          Subscribe to our{" "}
+          <span className="italic text-gradient-gold">newsletter.</span>
         </h2>
-
-        <p className="mx-auto mt-5 max-w-xl font-sans text-base leading-relaxed text-white/60">
-          A short newsletter — releases, behind-the-scenes, and what we're
-          watching at the frontier. No noise.
+        <p className="mx-auto mt-3 max-w-xl font-sans text-sm leading-relaxed text-ink/55 md:text-base">
+          Stay up to date on all things Assyrian Intelligence.
         </p>
 
         {status === "subscribed" ? (
@@ -78,7 +80,7 @@ export function EmailCapture() {
         ) : (
           <form
             onSubmit={submit}
-            className="mx-auto mt-10 flex w-full max-w-lg flex-col gap-3 sm:flex-row"
+            className="mx-auto mt-7 flex w-full max-w-lg flex-col gap-3 sm:flex-row"
           >
             <label htmlFor="subscribe-email" className="sr-only">
               Email address
@@ -92,7 +94,7 @@ export function EmailCapture() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@domain.com"
-              className="flex-1 rounded-full border border-white/15 bg-white/5 px-5 py-3 font-sans text-base text-white placeholder:text-white/35 backdrop-blur-sm transition-colors focus:border-gold focus:outline-none disabled:opacity-60"
+              className="flex-1 rounded-full border border-hair bg-white px-5 py-3 font-sans text-base text-ink placeholder:text-ink/30 transition-colors focus:border-gold focus:outline-none disabled:opacity-60"
             />
             <button
               type="submit"
@@ -106,7 +108,7 @@ export function EmailCapture() {
                 </>
               ) : (
                 <>
-                  Join the list
+                  Subscribe
                   <Arrow />
                 </>
               )}
@@ -115,12 +117,12 @@ export function EmailCapture() {
         )}
 
         {status === "error" && (
-          <p className="mx-auto mt-4 max-w-lg font-sans text-sm text-red-300">
+          <p className="mx-auto mt-4 max-w-lg font-sans text-sm text-red-600">
             {errorMsg}
           </p>
         )}
 
-        <p className="mt-6 font-sans text-xs text-white/35">
+        <p className="mt-5 font-sans text-xs text-ink/35">
           No spam. Unsubscribe any time.
         </p>
       </div>
@@ -130,15 +132,15 @@ export function EmailCapture() {
 
 function SuccessPanel({ onReset }: { onReset: () => void }) {
   return (
-    <div className="mx-auto mt-10 flex max-w-md flex-col items-center gap-3">
+    <div className="mx-auto mt-7 flex max-w-md flex-col items-center gap-2">
       <div
-        className="flex h-12 w-12 items-center justify-center rounded-full text-ink"
+        className="flex h-11 w-11 items-center justify-center rounded-full text-white"
         style={{
           background: "linear-gradient(135deg, #E7D9B2 0%, #C8A24B 60%, #9A7A2E 100%)",
           boxShadow: "0 12px 30px -10px rgba(200,162,75,0.6)",
         }}
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
             d="M5 12l5 5L20 7"
             stroke="currentColor"
@@ -148,16 +150,16 @@ function SuccessPanel({ onReset }: { onReset: () => void }) {
           />
         </svg>
       </div>
-      <p className="font-display text-2xl tracking-tight text-white">
+      <p className="mt-2 font-display text-xl tracking-tight text-ink">
         You&apos;re in.
       </p>
-      <p className="font-sans text-sm text-white/55">
-        Check your inbox to confirm — then we&apos;ll be in touch.
+      <p className="font-sans text-sm text-ink/55">
+        Check your inbox to confirm.
       </p>
       <button
         type="button"
         onClick={onReset}
-        className="mt-2 font-sans text-xs text-gold underline-offset-4 hover:underline"
+        className="mt-1 font-sans text-xs text-gold underline-offset-4 hover:underline"
       >
         Add another email →
       </button>

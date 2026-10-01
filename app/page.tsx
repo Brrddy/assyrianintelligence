@@ -85,22 +85,13 @@ export default function Home() {
             tools. Choose where to start.
           </p>
         </div>
-
-        {/* soft gold hairline divider */}
-        <div className="mx-auto mt-20 max-w-5xl px-6 md:mt-24 md:px-8">
-          <div
-            aria-hidden
-            className="h-px w-full"
-            style={{
-              background:
-                "linear-gradient(90deg, transparent 0%, rgba(200,162,75,0.6) 50%, transparent 100%)",
-            }}
-          />
-        </div>
       </section>
 
+      {/* ───────── NEWSLETTER (acts as the visual divider between hero + tiles) ───────── */}
+      <EmailCapture />
+
       {/* ───────── SECTION TILES ───────── */}
-      <section className="relative bg-white pb-28 md:pb-36">
+      <section className="relative bg-white pt-20 pb-28 md:pt-24 md:pb-36">
         <div className="mx-auto max-w-6xl px-6 md:px-8">
           <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
             {SECTIONS.map((s) => (
@@ -165,7 +156,6 @@ export default function Home() {
         </div>
       </section>
 
-      <EmailCapture />
       <Footer />
     </main>
   );
