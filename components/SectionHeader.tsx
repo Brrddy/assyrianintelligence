@@ -22,7 +22,9 @@ export function SectionHeader({
         </p>
       </Reveal>
       <Reveal delay={0.05}>
-        <h2 className="mt-4 font-display text-[34px] leading-[1.05] tracking-[-0.015em] text-ink md:text-[56px]">
+        {/* leading-[1.12] + pb-1 give italic descenders (e.g. "y" in "Why")
+            room so background-clip: text doesn't slice them at the baseline. */}
+        <h2 className="mt-4 pb-1 font-display text-[34px] leading-[1.12] tracking-[-0.015em] text-ink md:text-[56px]">
           {title}
         </h2>
       </Reveal>

@@ -75,7 +75,7 @@ export default function Home() {
             <Wordmark size="xl" />
           </div>
 
-          <h1 className="mt-8 font-display text-[36px] leading-[1.05] tracking-[-0.015em] text-ink md:text-[52px]">
+          <h1 className="mt-8 pb-1 font-display text-[36px] leading-[1.12] tracking-[-0.015em] text-ink md:text-[52px]">
             A creative studio{" "}
             <span className="italic text-gradient-gold">for the AI era.</span>
           </h1>
