@@ -11,8 +11,8 @@ import { Wordmark } from "./Wordmark";
  * Multi-page site: links are routes (not anchors). Active route is highlighted
  * in gold. The wordmark + flag always route back to the landing page.
  *
- * The "Get an Estimate" CTA jumps straight into the AI-Video page at
- * the Estimator anchor (/ai-video#estimator) from anywhere on the site.
+ * The "Subscribe" CTA jumps to the newsletter signup band on the home
+ * page (/#subscribe) from anywhere on the site.
  */
 type NavLink = { href: string; label: string };
 
@@ -104,10 +104,10 @@ export function Nav() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/ai-video#estimator"
+            href="/#subscribe"
             className="btn-gold hidden md:inline-flex"
           >
-            Get an Estimate
+            Subscribe
           </Link>
           <button
             type="button"
@@ -161,11 +161,11 @@ export function Nav() {
           })}
           <li className="pt-2">
             <Link
-              href="/ai-video#estimator"
+              href="/#subscribe"
               onClick={() => setOpen(false)}
               className="btn-gold w-full"
             >
-              Get an Estimate
+              Subscribe
             </Link>
           </li>
         </ul>
