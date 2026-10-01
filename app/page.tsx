@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
+import { EmailCapture } from "@/components/EmailCapture";
 import { Footer } from "@/components/Footer";
 import { Wordmark } from "@/components/Wordmark";
 
@@ -164,6 +165,7 @@ export default function Home() {
         </div>
       </section>
 
+      <EmailCapture />
       <Footer />
     </main>
   );
