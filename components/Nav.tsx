@@ -1,23 +1,34 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Wordmark } from "./Wordmark";
 
-const LINKS = [
-  { href: "#work",       label: "Work" },
-  { href: "#services",   label: "Services" },
-  { href: "#models",     label: "Stack" },
-  { href: "#process",    label: "Process" },
-  { href: "#estimator",  label: "Estimator" },
-  { href: "#contact",    label: "Contact" },
+/**
+ * Site-wide nav.
+ *
+ * Multi-page site: links are routes (not anchors). Active route is highlighted
+ * in gold. The wordmark + flag always route back to the landing page.
+ *
+ * The "Get an Estimate" CTA jumps straight into the AI-Video page at
+ * the Estimator anchor (/ai-video#estimator) from anywhere on the site.
+ */
+type NavLink = { href: string; label: string };
+
+const LINKS: NavLink[] = [
+  { href: "/ai-video", label: "AI Video" },
+  { href: "/shop",     label: "Shop" },
+  { href: "/values",   label: "Values" },
+  { href: "/contact",  label: "Contact" },
 ];
 
 export function Nav() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // Track scroll position — drives both the wordmark fade and the
-  // nav's translucent / bordered "scrolled" treatment.
+  // Track scroll — drives the nav's "scrolled" treatment (crisper border/shadow).
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -35,6 +46,14 @@ export function Nav() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // Close mobile menu when the route changes.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname?.startsWith(href);
+
   return (
     <header
       className={`safe-top safe-x fixed inset-x-0 top-0 z-50 border-b transition-all duration-500 ease-editorial ${
@@ -44,11 +63,12 @@ export function Nav() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-8">
-        <a
-          href="#top"
+        <Link
+          href="/"
           aria-label="Assyrian Intelligence — home"
           className="flex shrink-0 items-center gap-3"
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assyrian-flag.svg"
             alt=""
@@ -56,25 +76,39 @@ export function Nav() {
             className="h-6 w-auto rounded-[2px] ring-1 ring-hair/60"
           />
           <Wordmark size="sm" />
-        </a>
+        </Link>
 
         <ul className="hidden items-center gap-8 md:flex">
-          {LINKS.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                className="font-sans text-[13px] text-ink/70 transition-colors hover:text-ink"
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
+          {LINKS.map((l) => {
+            const active = isActive(l.href);
+            return (
+              <li key={l.href}>
+                <Link
+                  href={l.href}
+                  className={`relative font-sans text-[13px] transition-colors ${
+                    active ? "text-gold" : "text-ink/70 hover:text-ink"
+                  }`}
+                >
+                  {l.label}
+                  {active && (
+                    <span
+                      aria-hidden
+                      className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent"
+                    />
+                  )}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
 
         <div className="flex items-center gap-3">
-          <a href="#estimator" className="btn-gold hidden md:inline-flex">
+          <Link
+            href="/ai-video#estimator"
+            className="btn-gold hidden md:inline-flex"
+          >
             Get an Estimate
-          </a>
+          </Link>
           <button
             type="button"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -100,7 +134,7 @@ export function Nav() {
         </div>
       </nav>
 
-      {/* Mobile dropdown — animates open via max-height + opacity. */}
+      {/* Mobile dropdown */}
       <div
         id="mobile-menu"
         aria-hidden={!open}
@@ -109,25 +143,30 @@ export function Nav() {
         }`}
       >
         <ul className="flex flex-col gap-1 px-6 py-4">
-          {LINKS.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="block py-2 font-sans text-base text-ink/80 hover:text-ink"
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
+          {LINKS.map((l) => {
+            const active = isActive(l.href);
+            return (
+              <li key={l.href}>
+                <Link
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className={`block py-2 font-sans text-base transition-colors ${
+                    active ? "text-gold" : "text-ink/80 hover:text-ink"
+                  }`}
+                >
+                  {l.label}
+                </Link>
+              </li>
+            );
+          })}
           <li className="pt-2">
-            <a
-              href="#estimator"
+            <Link
+              href="/ai-video#estimator"
               onClick={() => setOpen(false)}
               className="btn-gold w-full"
             >
               Get an Estimate
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CONTACT } from "@/config/site";
 import {
   formatSummary,
-  useEstimate,
+  useEstimateOptional,
 } from "./EstimateContext";
 import { Reveal } from "./Reveal";
 import { SectionHeader } from "./SectionHeader";
@@ -30,13 +30,20 @@ const initialForm: FormFields = { name: "", email: "", message: "" };
 type Status = "idle" | "sending" | "sent" | "error";
 
 export function Contact() {
-  const { state, compute, formatSeconds } = useEstimate();
+  // Estimate context is OPTIONAL. When present (ai-video page), the form
+  // attaches the live quote to the submission + shows a "live estimate"
+  // side panel. When absent (standalone /contact page), it's a plain
+  // name/email/message contact form.
+  const estimate = useEstimateOptional();
   const [form, setForm] = useState<FormFields>(initialForm);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const computed = compute();
-  const summary = formatSummary(state, computed, formatSeconds);
+  const computed = estimate ? estimate.compute() : null;
+  const summary =
+    estimate && computed
+      ? formatSummary(estimate.state, computed, estimate.formatSeconds)
+      : "";
 
   // === SWAP POINT =========================================================
   // Replace this function to use a different provider. The payload object
@@ -71,38 +78,42 @@ export function Contact() {
     setStatus("sending");
     setErrorMsg("");
 
-    const turnaroundLabel =
-      state.turnaround === "standard"
-        ? "Standard"
-        : state.turnaround === "priority"
-        ? "Priority"
-        : "Express";
-
-    const payload = {
-      // Formspree-friendly fields
-      _subject: `Quote request — ${form.name || "new client"}`,
+    const basePayload: Record<string, unknown> = {
+      _subject: estimate
+        ? `Quote request — ${form.name || "new client"}`
+        : `New message — ${form.name || "new contact"}`,
       name: form.name,
       email: form.email,
       message: form.message || "(no message)",
-
-      // Full estimate as a single readable block (lands cleanly in any inbox)
-      estimate_summary: summary,
-
-      // Structured selections (in case you wire this to a CRM later)
-      song_length: formatSeconds(state.seconds),
-      characters: state.characters,
-      scenes: state.scenes,
-      style: state.style,
-      turnaround: turnaroundLabel,
-      lipSync: state.lipSync ? "Yes" : "No",
-      revisionsPackage: state.revisions ? "Yes" : "No",
-      estimated_range_low: Math.round(computed.low),
-      estimated_range_high: Math.round(computed.high),
-      estimated_midpoint: Math.round(computed.total),
     };
 
+    // Only attach estimate data when an EstimateProvider wraps us.
+    if (estimate && computed) {
+      const { state, formatSeconds } = estimate;
+      const turnaroundLabel =
+        state.turnaround === "standard"
+          ? "Standard"
+          : state.turnaround === "priority"
+          ? "Priority"
+          : "Express";
+
+      Object.assign(basePayload, {
+        estimate_summary: summary,
+        song_length: formatSeconds(state.seconds),
+        characters: state.characters,
+        scenes: state.scenes,
+        style: state.style,
+        turnaround: turnaroundLabel,
+        lipSync: state.lipSync ? "Yes" : "No",
+        revisionsPackage: state.revisions ? "Yes" : "No",
+        estimated_range_low: Math.round(computed.low),
+        estimated_range_high: Math.round(computed.high),
+        estimated_midpoint: Math.round(computed.total),
+      });
+    }
+
     try {
-      await submitContact(payload);
+      await submitContact(basePayload);
       setStatus("sent");
       setForm(initialForm);
     } catch (err) {
@@ -128,10 +139,18 @@ export function Contact() {
               <span className="italic text-gold">unforgettable.</span>
             </>
           }
-          lede="Send your selections — we'll respond within 48 hours with a firm quote and next steps."
+          lede={
+            estimate
+              ? "Send your selections — we'll respond within 48 hours with a firm quote and next steps."
+              : "Tell us what you're building. We'll respond within 48 hours."
+          }
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-10 md:mt-20 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+        <div
+          className={`mt-14 grid grid-cols-1 gap-10 md:mt-20 ${
+            estimate ? "lg:grid-cols-[1.1fr_1fr] lg:gap-16" : "mx-auto max-w-2xl"
+          }`}
+        >
           {/* ─── Form ─── */}
           <Reveal>
             {status === "sent" ? (
@@ -188,7 +207,7 @@ export function Contact() {
                       </>
                     ) : (
                       <>
-                        Send Estimate
+                        {estimate ? "Send Estimate" : "Send Message"}
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                           <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
@@ -205,85 +224,89 @@ export function Contact() {
                 )}
 
                 <p className="pt-1 font-sans text-xs text-ink/40">
-                  Submitting sends your full estimate — every selection, the
-                  itemized breakdown, and the price range — straight to our inbox.
+                  {estimate
+                    ? "Submitting sends your full estimate — every selection, the itemized breakdown, and the price range — straight to our inbox."
+                    : "We read every message. Expect a reply within two business days."}
                 </p>
               </form>
             )}
           </Reveal>
 
-          {/* ─── Side panel: live attached summary preview ─── */}
-          <Reveal delay={0.1}>
-            <aside className="relative overflow-hidden rounded-xl border border-hair bg-paper p-6 md:p-8 shadow-[0_20px_50px_-30px_rgba(200,162,75,0.25)]">
-              <span aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
-              <div className="flex items-center justify-between">
-                <p className="font-sans text-[11px] uppercase tracking-eyebrow text-gold">
-                  Attached to your message
+          {/* ─── Side panel: live attached summary preview (only when
+                 wrapped in EstimateProvider on the ai-video page) ─── */}
+          {estimate && computed && (
+            <Reveal delay={0.1}>
+              <aside className="relative overflow-hidden rounded-xl border border-hair bg-paper p-6 md:p-8 shadow-[0_20px_50px_-30px_rgba(200,162,75,0.25)]">
+                <span aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+                <div className="flex items-center justify-between">
+                  <p className="font-sans text-[11px] uppercase tracking-eyebrow text-gold">
+                    Attached to your message
+                  </p>
+                  <span className="font-sans text-[11px] text-ink/40">
+                    Auto-synced
+                  </span>
+                </div>
+
+                <h3 className="mt-3 font-display text-2xl tracking-tight text-ink">
+                  Your live estimate
+                </h3>
+
+                <ul className="mt-6 space-y-3 font-sans text-sm">
+                  <Row k="Song length" v={estimate.formatSeconds(estimate.state.seconds)} />
+                  <Row k="Characters" v={String(estimate.state.characters)} />
+                  <Row k="Scenes" v={String(estimate.state.scenes)} />
+                  <Row k="Style" v={estimate.state.style || "—"} />
+                  <Row
+                    k="Turnaround"
+                    v={
+                      estimate.state.turnaround === "standard"
+                        ? "Standard"
+                        : estimate.state.turnaround === "priority"
+                        ? "Priority"
+                        : "Express"
+                    }
+                  />
+                  <Row
+                    k="Add-ons"
+                    v={
+                      [
+                        estimate.state.lipSync ? "Lip-sync" : null,
+                        estimate.state.revisions ? "Revisions" : null,
+                      ]
+                        .filter(Boolean)
+                        .join(", ") || "None"
+                    }
+                  />
+                </ul>
+
+                <div className="my-6 h-px w-full bg-hair" />
+
+                <div className="flex items-baseline justify-between">
+                  <span className="font-sans text-[11px] uppercase tracking-eyebrow text-ink/60">
+                    Estimated range
+                  </span>
+                  <span className="font-display text-2xl tracking-tight text-ink">
+                    {computed.low.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                      maximumFractionDigits: 0,
+                    })}{" "}
+                    –{" "}
+                    {computed.high.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                      maximumFractionDigits: 0,
+                    })}
+                  </span>
+                </div>
+
+                <p className="mt-4 font-sans text-[11px] leading-relaxed text-ink/40">
+                  Preliminary estimate. The full itemized breakdown is included
+                  in your email automatically.
                 </p>
-                <span className="font-sans text-[11px] text-ink/40">
-                  Auto-synced
-                </span>
-              </div>
-
-              <h3 className="mt-3 font-display text-2xl tracking-tight text-ink">
-                Your live estimate
-              </h3>
-
-              <ul className="mt-6 space-y-3 font-sans text-sm">
-                <Row k="Song length" v={formatSeconds(state.seconds)} />
-                <Row k="Characters" v={String(state.characters)} />
-                <Row k="Scenes" v={String(state.scenes)} />
-                <Row k="Style" v={state.style || "—"} />
-                <Row
-                  k="Turnaround"
-                  v={`${
-                    state.turnaround === "standard"
-                      ? "Standard"
-                      : state.turnaround === "priority"
-                      ? "Priority"
-                      : "Express"
-                  }`}
-                />
-                <Row
-                  k="Add-ons"
-                  v={
-                    [
-                      state.lipSync ? "Lip-sync" : null,
-                      state.revisions ? "Revisions" : null,
-                    ]
-                      .filter(Boolean)
-                      .join(", ") || "None"
-                  }
-                />
-              </ul>
-
-              <div className="my-6 h-px w-full bg-hair" />
-
-              <div className="flex items-baseline justify-between">
-                <span className="font-sans text-[11px] uppercase tracking-eyebrow text-ink/60">
-                  Estimated range
-                </span>
-                <span className="font-display text-2xl tracking-tight text-ink">
-                  {computed.low.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                    maximumFractionDigits: 0,
-                  })}{" "}
-                  –{" "}
-                  {computed.high.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                    maximumFractionDigits: 0,
-                  })}
-                </span>
-              </div>
-
-              <p className="mt-4 font-sans text-[11px] leading-relaxed text-ink/40">
-                Preliminary estimate. The full itemized breakdown is included
-                in your email automatically.
-              </p>
-            </aside>
-          </Reveal>
+              </aside>
+            </Reveal>
+          )}
         </div>
 
         {/* Contact details */}

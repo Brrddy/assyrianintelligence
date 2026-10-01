@@ -159,6 +159,15 @@ export function useEstimate() {
 }
 
 /**
+ * Same as useEstimate() but returns null when no provider is present.
+ * Lets a shared component (e.g. the Contact form) render both inside
+ * the estimator flow and as a standalone page without crashing.
+ */
+export function useEstimateOptional() {
+  return useContext(EstimateCtx);
+}
+
+/**
  * Build the plain-text summary that gets emailed / copied.
  * Single source of truth — same string used in mailto and clipboard.
  */
