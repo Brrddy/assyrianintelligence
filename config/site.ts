@@ -163,3 +163,17 @@ export const PRICING = {
 };
 
 export type TurnaroundKey = keyof typeof PRICING.turnaround;
+
+/* ---------- SHOP (Printful + Stripe) ------------------------------------- */
+/*
+ * Products, photos, sizes and prices come live from Printful — edit them there.
+ * These are the checkout settings.
+ */
+export const SHOP = {
+  /** Flat shipping charged at checkout, in cents ($6.00). */
+  shippingCents: 600,
+  /** Delivery estimate shown at checkout, business days [min, max]. */
+  deliveryDays: [5, 10] as [number, number],
+  /** Countries you'll ship to (ISO codes). */
+  shipCountries: ["US"] as ("US" | "CA" | "GB" | "AU")[],
+};
