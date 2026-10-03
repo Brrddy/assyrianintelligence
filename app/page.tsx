@@ -53,7 +53,7 @@ export default function Home() {
       <Nav />
 
       {/* ───────── HERO ───────── */}
-      <section className="relative isolate overflow-hidden bg-white pt-32 pb-16 md:pt-44 md:pb-20">
+      <section className="relative isolate overflow-hidden bg-white pt-28 pb-12 md:pt-44 md:pb-20">
         {/* Ambient gold wash */}
         <div
           aria-hidden
@@ -66,21 +66,21 @@ export default function Home() {
 
         <div className="mx-auto max-w-5xl px-6 text-center md:px-8">
           <p className="eyebrow inline-flex items-center">
-            <span className="mr-3 inline-block h-px w-8 bg-gradient-to-r from-transparent to-gold" />
+            <span className="mr-3 hidden h-px w-8 bg-gradient-to-r from-transparent to-gold sm:inline-block" />
             Est. 2026 · For the Assyrian era
-            <span className="ml-3 inline-block h-px w-8 bg-gradient-to-r from-gold to-transparent" />
+            <span className="ml-3 hidden h-px w-8 bg-gradient-to-r from-gold to-transparent sm:inline-block" />
           </p>
 
-          <div className="mt-6 flex justify-center">
+          <div className="mt-7 flex justify-center md:mt-6">
             <Wordmark size="xl" />
           </div>
 
-          <h1 className="mt-8 pb-1 font-display text-[36px] leading-[1.12] tracking-[-0.015em] text-ink md:text-[52px]">
+          <h1 className="mt-8 pb-1 font-display text-[32px] leading-[1.12] tracking-[-0.015em] text-ink text-balance sm:text-[36px] md:text-[52px]">
             A creative studio{" "}
             <span className="italic text-gradient-gold">for the AI era.</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-xl font-sans text-base leading-relaxed text-ink/60 md:text-lg">
+          <p className="mx-auto mt-5 max-w-xl font-sans text-[15px] leading-relaxed text-ink/60 sm:text-base md:mt-6 md:text-lg">
             Rooted in Assyrian heritage. Built with the frontier of generative
             tools. Choose where to start.
           </p>
@@ -91,14 +91,14 @@ export default function Home() {
       <EmailCapture />
 
       {/* ───────── SECTION TILES ───────── */}
-      <section className="relative bg-white pt-20 pb-28 md:pt-24 md:pb-36">
+      <section className="relative bg-white pt-12 pb-16 md:pt-24 md:pb-36">
         <div className="mx-auto max-w-6xl px-6 md:px-8">
-          <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
+          <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
             {SECTIONS.map((s) => (
               <li key={s.href}>
                 <Link
                   href={s.href}
-                  className="group relative block h-full overflow-hidden rounded-2xl border border-hair bg-paper p-8 transition-all duration-500 ease-editorial hover:border-gold/0 hover:bg-white hover:shadow-[0_30px_60px_-30px_rgba(200,162,75,0.35)] md:p-10"
+                  className="group relative block h-full overflow-hidden rounded-2xl border border-hair bg-paper p-6 transition-all duration-500 ease-editorial active:scale-[0.99] active:bg-white sm:p-8 hover:border-gold/0 hover:bg-white hover:shadow-[0_30px_60px_-30px_rgba(200,162,75,0.35)] md:p-10"
                 >
                   {/* gold corner glow on hover */}
                   <span
@@ -122,15 +122,15 @@ export default function Home() {
                     <span className="h-px w-12 self-center bg-hair transition-all duration-500 group-hover:w-20 group-hover:bg-gradient-to-r group-hover:from-transparent group-hover:via-gold group-hover:to-transparent" />
                   </div>
 
-                  <h2 className="relative mt-6 font-display text-[32px] leading-tight tracking-tight text-ink md:text-[40px]">
+                  <h2 className="relative mt-4 font-display text-[28px] leading-tight tracking-tight text-ink sm:mt-6 sm:text-[32px] md:text-[40px]">
                     {s.title}
                   </h2>
 
-                  <p className="relative mt-4 max-w-md font-sans text-[15px] leading-relaxed text-ink/60">
+                  <p className="relative mt-3 max-w-md font-sans text-[15px] leading-relaxed text-ink/60 sm:mt-4">
                     {s.body}
                   </p>
 
-                  <div className="relative mt-8 flex items-center gap-2 font-sans text-[13px] uppercase tracking-eyebrow text-gold">
+                  <div className="relative mt-6 flex items-center gap-2 font-sans text-[13px] uppercase tracking-eyebrow text-gold sm:mt-8">
                     {s.cta}
                     <svg
                       width="14"

@@ -150,7 +150,7 @@ export function Nav() {
                 <Link
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className={`block py-2 font-sans text-base transition-colors ${
+                  className={`block py-3 font-sans text-base transition-colors ${
                     active ? "text-gold" : "text-ink/80 hover:text-ink"
                   }`}
                 >
